@@ -1,0 +1,163 @@
+create database bank_churn;
+use bank_churn;
+create table churn_modelling (
+     RowNumber int,
+     Customerid BIGINT,
+     Surname  varchar(50),
+	 CreditScore int,
+     Geography varchar(20),
+     Gender varchar(10),
+     Age int,
+     Tenure int,
+     Balance FLOAT,
+     NumOfProducts int,
+     IsActiveMember int,
+     EstimatedSalary FLOAT,
+     Exited int
+     );
+     
+     select * from churn_modelling limit 10;
+     drop table if exists churn_modelling;
+     select * from amitdb.churn_modelling limit 5;
+     
+     select Gender, count(*) as Total_Customers, sum(case when exited = 1 then 1 else 0 end ) as Churned_Customers, 
+     round((sum(case when exited = 1 then 1 else 0 end )/count(*))* 100, 2 ) as churn_rate from amitdb.churn_modelling
+     group by Gender;
+     
+     select Geography, count(*) as Total_Customers, sum(case when exited =1 then 1 else 0 end) as Churned_Customers, 
+     round(( sum(case when exited = 1 then 1 else 0 end)/count(*))*100,2) as churn_rate from amitdb.churn_modelling
+     group by Geography
+     order by churn_rate DESC;
+     
+     select CASE
+                WHEN Age<30 then 'Young'
+                WHEN Age BETWEEN 30 AND 50 THEN 'Middle-Aged' else 'Senior' end as Age_Group, 
+                count(*) as total_Customers, sum( case when exited = 1 then 1 else 0 end ) as Churned_Customers,
+                round((sum(case when exited = 1 then 1 else 0 end )/ count(*)) * 100, 2 ) as churn_rate from amitdb.churn_modelling
+                Group by Age_Group;
+                
+     select Customerid , Surname , Geography, Balance , Age , Exited from amitdb.churn_modelling
+     where exited = 1 
+     order by Balance desc
+     limit 10;
+     
+     select CASE
+               when CreditScore < 500 then 'low'
+               when CreditScore BETWEEN 500 AND 700 THEN 'Medium' else 'High'
+			   end as CreditScore_range , count(*) as Total_Customers,
+               sum(CASE when  exited = 1 then 1 else 0 end ) as Churned_Customers,
+               round(sum(case when exited = 1 then 1 else 0 end )*100.0 / count(*), 2 ) as churn_rate
+               from amitdb.churn_modelling 
+               group by CreditScore_Range;
+               
+      select HasCrCard,
+			 count(*) as Total_Customers,
+             sum(case when exited = 1 then 1 else 0 end ) as Churned_Customers,
+             round(sum(case when exited = 1 then 1 else 0 end )*100.0/count(*), 2) as churn_rate
+             from amitdb.churn_modelling
+             Group by HasCrCard;
+             
+      select
+            IsActiveMember,
+            count(*) as Total_Customers,
+            sum(case when exited = 1 then 1 else 0 end ) as Churned_Customers,
+            round(sum(case when exited = 1 then 1 else 0 end ) *100.0/count(*),2) as churn_rate 
+            from amitdb.churn_modelling
+            group by IsActiveMember;
+            
+	select
+          Gender,
+          count(*) as Total_Customers,
+          sum(case when exited = 1 then 1 else 0 end) asChurned_Customers,
+          round(sum(case when exited = 1 then 1 else 0 end)*100.0/count(*),2) as churn_rate
+          from amitdb.churn_modelling
+          group by Gender;
+          
+	select Geography,
+           Gender, count(*) as Total_Customers,
+           sum(case when exited = 1 then 1 else 0 end) as Churned_Customers,
+           round(sum(case when exited = 1 then 1 else 0 end)*100.0/count(*),2) as churn_rate
+           from amitdb.churn_modelling
+           group by Geography,Gender
+           order by Geography,Gender;
+           
+		select Tenure,
+           count(*) as Total_Customers,
+           sum(case when exited = 1 then 1 else 0 end) as Churned_Customers,
+           round(sum(case when exited = 1 then 1 else 0 end)*100.0/count(*),2) as churn_rate
+           from amitdb.churn_modelling
+           group by tenure
+           order by tenure;
+           
+select 
+      case
+      when CreditScore < 600 then 'Low'
+      when CreditScore  between 600 and 750 then ' Medium' else 'High' end as Credit_Score_range,
+      count(*) as Total_Customers, 
+      sum(case when exited = 1 then 1 else 0 end ) as Churned_Customers,
+      round(sum(case when exited = 1 then 1 else 0 end) * 100.0 / count(*), 2) as churn_rate
+      from amitdb.churn_modelling
+      group by Credit_Score_range;
+      
+select 
+      NumOfProducts,
+      count(*) as Total_Customers,
+      sum(case when exited = 1 then 1 else 0 end ) as Churned_Customers,
+      round(sum(case when exited = 1 then 1 else 0 end) * 100.0/count(*),2) as churn_rate
+        from amitdb.churn_modelling
+        group by   NumOfProducts
+        order by   NumOfProducts;
+        
+select 
+      IsActiveMember,
+      count(*) as Total_Customers,
+      sum(case when exited = 1 then 1 else 0 end ) as Churned_Customers,
+      round(sum(case when exited = 1 then 1 else 0 end) * 100.0/count(*),2) as churn_rate
+        from amitdb.churn_modelling
+        group by  IsActiveMember;
+	
+    select 
+         case
+         when EstimatedSalary < 50000 then ' low'
+         when EstimatedSalary between  50000 and 100000 then ' Medium' else 'High'
+         End  as Salary_range ,
+         count(*) as Total_Customers,
+         sum(case when exited = 1 then 1 else 0 end ) as Churned_Customers,
+         round(sum(case when exited = 1 then 1 else 0 end) * 100.0/count(*),2) as churn_rate
+        from amitdb.churn_modelling
+        group by Salary_range ;
+        
+select 
+      count(*) as Total_Customers,
+      sum( case when exited =1 then 1 else 0 end) as Churned_Customers,
+      round(sum(case when exited = 1 then 1 else 0 end )* 100.0 /count(*) , 2) as overall_churn_rate
+      from amitdb.churn_modelling;
+      
+	select * from amitdb.churn_modelling
+    where exited = 1 ;
+    
+select NumOfProducts,
+       count(*) as Total_Customers,
+       sum(case when exited = 1 then 1 else 0 end) as Churned_Customers,
+       round(sum(case when exited = 1 then 1 else 0 end ) * 100.0/ count(*) , 2) as churn_rate 
+       from amitdb.churn_modelling
+       group by  NumOfProducts
+       order by churn_rate desc;
+       
+select HasCrCard,
+       count(*) as Total_Customers,
+       sum(case when exited = 1 then 1 else 0 end) as Churned_Customers,
+       round(sum(case when exited = 1 then 1 else 0 end ) * 100.0/ count(*) , 2) as churn_rate 
+       from amitdb.churn_modelling
+       group by HasCrCard
+       order by churn_rate desc;
+       
+select IsActiveMember,
+       count(*) as Total_Customers,
+       sum(case when exited = 1 then 1 else 0 end) as Churned_Customers,
+       round(sum(case when exited = 1 then 1 else 0 end ) * 100.0/ count(*) , 2) as churn_rate 
+       from amitdb.churn_modelling
+       group by  IsActiveMember
+       order by churn_rate desc;
+       
+select * from amitdb.churn_modelling;
